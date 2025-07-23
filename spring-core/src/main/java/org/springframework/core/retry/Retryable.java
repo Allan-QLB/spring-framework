@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.springframework.core.retry;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * {@code Retryable} is a functional interface that can be used to implement any
@@ -36,7 +38,7 @@ public interface Retryable<R> {
 	 * @return the result of the operation
 	 * @throws Throwable if an error occurs during the execution of the operation
 	 */
-	R execute() throws Throwable;
+	@Nullable R execute() throws Throwable;
 
 	/**
 	 * A unique, logical name for this retryable operation, used to distinguish

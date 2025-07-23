@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -477,7 +477,14 @@ final class DefaultRestClient implements RestClient {
 
 		@Override
 		public RequestBodySpec body(StreamingHttpOutputMessage.Body body) {
-			this.body = request -> body.writeTo(request.getBody());
+			this.body = request -> {
+				if (request instanceof StreamingHttpOutputMessage streamingMessage) {
+					streamingMessage.setBody(body);
+				}
+				else {
+					body.writeTo(request.getBody());
+				}
+			};
 			return this;
 		}
 
@@ -554,7 +561,7 @@ final class DefaultRestClient implements RestClient {
 		}
 
 		@Override
-		public <T> @Nullable T exchange(ExchangeFunction<T> exchangeFunction, boolean close) {
+		public <T extends @Nullable Object> T exchange(ExchangeFunction<T> exchangeFunction, boolean close) {
 			return exchangeInternal(exchangeFunction, close);
 		}
 
@@ -565,7 +572,7 @@ final class DefaultRestClient implements RestClient {
 			return value;
 		}
 
-		private <T> @Nullable T exchangeInternal(ExchangeFunction<T> exchangeFunction, boolean close) {
+		private <T extends @Nullable Object> T exchangeInternal(ExchangeFunction<T> exchangeFunction, boolean close) {
 			Assert.notNull(exchangeFunction, "ExchangeFunction must not be null");
 
 			ClientHttpResponse clientResponse = null;
@@ -796,11 +803,13 @@ final class DefaultRestClient implements RestClient {
 		}
 
 		@Override
+		@SuppressWarnings("NullAway") // See https://github.com/uber/NullAway/issues/1075
 		public <T> @Nullable T body(Class<T> bodyType) {
 			return executeAndExtract((request, response) -> readBody(request, response, bodyType, bodyType, this.hints));
 		}
 
 		@Override
+		@SuppressWarnings("NullAway") // See https://github.com/uber/NullAway/issues/1075
 		public <T> @Nullable T body(ParameterizedTypeReference<T> bodyType) {
 			Type type = bodyType.getType();
 			Class<T> bodyClass = bodyClass(type);
@@ -873,7 +882,7 @@ final class DefaultRestClient implements RestClient {
 			return hints;
 		}
 
-		public <T> @Nullable T executeAndExtract(RequestHeadersSpec.ExchangeFunction<T> exchangeFunction) {
+		public <T extends @Nullable Object> T executeAndExtract(RequestHeadersSpec.ExchangeFunction<T> exchangeFunction) {
 			return this.requestHeadersSpec.exchange(exchangeFunction);
 		}
 

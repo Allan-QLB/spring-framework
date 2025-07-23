@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>Implemented by {@link RetryTemplate}. Not often used directly, but a useful
  * option to enhance testability, as it can easily be mocked or stubbed.
+ *
+ * <p>Inspired by the <a href="https://github.com/spring-projects/spring-retry">Spring Retry</a>
+ * project but redesigned as a minimal core retry feature in the Spring Framework.
  *
  * @author Mahmoud Ben Hassine
  * @since 7.0
